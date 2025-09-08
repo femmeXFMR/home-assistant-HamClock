@@ -1,8 +1,4 @@
 {
   "name": "Home Assistant HamClock",
-  "content_in_root": true,
-  "filename": "hamclock",
-  "country": ["US"],
-  "homeassistant": "2023.1.0",
-  "render_readme": true
+  "filename": "hamclock.jinja"
 }
