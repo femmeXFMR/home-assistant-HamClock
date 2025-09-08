@@ -1,0 +1,289 @@
+title: HamClock Advanced
+path: hamclock-advanced
+icon: mdi:satellite-variant
+panel: false
+type: sidebar
+badges: []
+cards:
+  # Header with current conditions summary
+  - type: custom:mushroom-template-card
+    primary: "Space Weather Status"
+    secondary: "{{ now().strftime('%A, %B %d, %Y at %I:%M %p') }}"
+    icon: >
+      {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+      {% set xray = states('sensor.hamclock_xray_flux') | float(0) %}
+      {% if kp >= 6 or xray >= 1e-5 %}
+        mdi:alert-circle
+      {% elif kp >= 4 or xray >= 1e-6 %}
+        mdi:alert
+      {% else %}
+        mdi:weather-sunny
+      {% endif %}
+    icon_color: >
+      {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+      {% set xray = states('sensor.hamclock_xray_flux') | float(0) %}
+      {% if kp >= 6 or xray >= 1e-5 %}
+        red
+      {% elif kp >= 4 or xray >= 1e-6 %}
+        orange
+      {% else %}
+        green
+      {% endif %}
+    layout: horizontal
+    fill_container: true
+
+  # Current Conditions Grid
+  - type: grid
+    square: false
+    columns: 4
+    cards:
+      # Kp Index with trend
+      - type: custom:mushroom-template-card
+        primary: "Kp Index"
+        secondary: >
+          {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+          {% if kp >= 6 %}
+            Geomagnetic Storm
+          {% elif kp >= 4 %}
+            Active Conditions
+          {% else %}
+            Quiet Conditions
+          {% endif %}
+        icon: >
+          {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+          {% if kp >= 6 %}
+            mdi:weather-hurricane
+          {% elif kp >= 4 %}
+            mdi:weather-windy
+          {% else %}
+            mdi:weather-partly-cloudy
+          {% endif %}
+        icon_color: >
+          {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+          {% if kp >= 6 %}
+            red
+          {% elif kp >= 4 %}
+            orange
+          {% else %}
+            green
+          {% endif %}
+        entity: sensor.hamclock_kp_index
+        layout: vertical
+        fill_container: true
+
+      # X-ray Flux with class
+      - type: custom:mushroom-template-card
+        primary: "X-ray Class"
+        secondary: >
+          {% set flux = states('sensor.hamclock_xray_flux') | float(0) %}
+          {{ "%.1e"|format(flux) }} W/m²
+        icon: >
+          {% set flux = states('sensor.hamclock_xray_flux') | float(0) %}
+          {% if flux >= 1e-4 %}
+            mdi:flash
+          {% elif flux >= 1e-5 %}
+            mdi:flash-outline
+          {% else %}
+            mdi:weather-sunny
+          {% endif %}
+        icon_color: >
+          {% set flux = states('sensor.hamclock_xray_flux') | float(0) %}
+          {% if flux >= 1e-4 %}
+            red
+          {% elif flux >= 1e-5 %}
+            orange
+          {% else %}
+            green
+          {% endif %}
+        entity: sensor.hamclock_xray_class
+        layout: vertical
+        fill_container: true
+
+      # Solar Flux Index
+      - type: custom:mushroom-template-card
+        primary: "Solar Flux"
+        secondary: >
+          {% set sfi = states('sensor.hamclock_sfi') | float(0) %}
+          {% if sfi >= 200 %}
+            Excellent Propagation
+          {% elif sfi >= 150 %}
+            Good Propagation
+          {% elif sfi >= 100 %}
+            Fair Propagation
+          {% else %}
+            Poor Propagation
+          {% endif %}
+        icon: mdi:weather-sunny
+        icon_color: >
+          {% set sfi = states('sensor.hamclock_sfi') | float(0) %}
+          {% if sfi >= 200 %}
+            green
+          {% elif sfi >= 150 %}
+            blue
+          {% elif sfi >= 100 %}
+            orange
+          {% else %}
+            red
+          {% endif %}
+        entity: sensor.hamclock_sfi
+        layout: vertical
+        fill_container: true
+
+      # Solar Wind Speed
+      - type: custom:mushroom-template-card
+        primary: "Solar Wind"
+        secondary: >
+          {% set speed = states('sensor.hamclock_solar_wind_speed') | float(0) %}
+          {% if speed >= 600 %}
+            High Speed Stream
+          {% elif speed >= 400 %}
+            Normal
+          {% else %}
+            Slow
+          {% endif %}
+        icon: mdi:weather-windy
+        icon_color: >
+          {% set speed = states('sensor.hamclock_solar_wind_speed') | float(0) %}
+          {% if speed >= 600 %}
+            red
+          {% elif speed >= 400 %}
+            green
+          {% else %}
+            blue
+          {% endif %}
+        entity: sensor.hamclock_solar_wind_speed
+        layout: vertical
+        fill_container: true
+
+  # Propagation Prediction Card
+  - type: custom:mushroom-template-card
+    primary: "Band Conditions"
+    secondary: >
+      {% set sfi = states('sensor.hamclock_sfi') | float(0) %}
+      {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+      {% if sfi >= 200 and kp <= 2 %}
+        All bands open - Excellent conditions
+      {% elif sfi >= 150 and kp <= 3 %}
+        HF bands good, VHF marginal
+      {% elif sfi >= 100 and kp <= 4 %}
+        Lower HF bands only
+      {% else %}
+        Poor conditions - Check local
+      {% endif %}
+    icon: mdi:radio
+    icon_color: >
+      {% set sfi = states('sensor.hamclock_sfi') | float(0) %}
+      {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+      {% if sfi >= 200 and kp <= 2 %}
+        green
+      {% elif sfi >= 150 and kp <= 3 %}
+        blue
+      {% elif sfi >= 100 and kp <= 4 %}
+        orange
+      {% else %}
+        red
+      {% endif %}
+    layout: horizontal
+    fill_container: true
+
+  # Aurora Prediction
+  - type: custom:mushroom-template-card
+    primary: "Aurora Activity"
+    secondary: >
+      {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+      {% if kp >= 7 %}
+        Aurora visible to mid-latitudes
+      {% elif kp >= 5 %}
+        Aurora visible to high latitudes
+      {% elif kp >= 3 %}
+        Aurora possible at high latitudes
+      {% else %}
+        No aurora activity expected
+      {% endif %}
+    icon: mdi:weather-night
+    icon_color: >
+      {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+      {% if kp >= 7 %}
+        purple
+      {% elif kp >= 5 %}
+        blue
+      {% elif kp >= 3 %}
+        cyan
+      {% else %}
+        grey
+      {% endif %}
+    layout: horizontal
+    fill_container: true
+
+  # 24-Hour Trends
+  - type: custom:apexcharts-card
+    header:
+      title: "24-Hour Space Weather Trends"
+      show: true
+    chart_type: line
+    series:
+      - entity: sensor.hamclock_kp_index
+        name: "Kp Index"
+        color: "#ff6b6b"
+        stroke_width: 3
+      - entity: sensor.hamclock_sfi
+        name: "Solar Flux"
+        color: "#4ecdc4"
+        stroke_width: 3
+        y_axis_id: y2
+    y_axis:
+      - min: 0
+        max: 9
+        title: "Kp Index"
+      - id: y2
+        min: 50
+        max: 300
+        title: "Solar Flux (SFU)"
+        opposite: true
+    x_axis:
+      type: datetime
+    hours_to_show: 24
+    update_interval: 900
+
+  # Detailed X-ray and Solar Wind
+  - type: custom:apexcharts-card
+    header:
+      title: "X-ray Flux & Solar Wind (24h)"
+      show: true
+    chart_type: line
+    series:
+      - entity: sensor.hamclock_xray_flux
+        name: "X-ray Flux"
+        color: "#ffa726"
+        stroke_width: 3
+        y_axis_id: y2
+      - entity: sensor.hamclock_solar_wind_speed
+        name: "Solar Wind Speed"
+        color: "#42a5f5"
+        stroke_width: 3
+    y_axis:
+      - min: 200
+        max: 800
+        title: "Solar Wind (km/s)"
+      - id: y2
+        min: 1e-8
+        max: 1e-4
+        title: "X-ray Flux (W/m²)"
+        opposite: true
+        logarithmic: true
+    x_axis:
+      type: datetime
+    hours_to_show: 24
+    update_interval: 900
+
+  # Navigation
+  - type: custom:mushroom-template-card
+    primary: "Navigation"
+    secondary: "Switch between dashboard views"
+    icon: mdi:view-dashboard
+    icon_color: blue
+    tap_action:
+      action: navigate
+      navigation_path: /lovelace/hamclock-overview
+    layout: horizontal
+    fill_container: true

@@ -1,0 +1,174 @@
+title: HamClock Settings
+path: hamclock-settings
+icon: mdi:cog
+panel: false
+type: sidebar
+badges: []
+cards:
+  # Header
+  - type: custom:mushroom-template-card
+    primary: "HamClock Configuration"
+    secondary: "Customize your space weather monitoring experience"
+    icon: mdi:cog
+    icon_color: blue
+    layout: horizontal
+    fill_container: true
+
+  # Theme and Display Settings
+  - type: custom:mushroom-template-card
+    primary: "Appearance & Display"
+    secondary: "Customize the look and feel"
+    icon: mdi:palette
+    icon_color: purple
+    layout: horizontal
+    fill_container: true
+
+  - type: entities
+    title: "Display Settings"
+    entities:
+      - entity: input_select.hamclock_theme
+        name: "Theme"
+      - entity: input_select.hamclock_display_mode
+        name: "Display Mode"
+      - entity: input_boolean.hamclock_compact_mode
+        name: "Compact Mode"
+      - entity: input_boolean.hamclock_show_trends
+        name: "Show Trend Indicators"
+
+  # Update Settings
+  - type: custom:mushroom-template-card
+    primary: "Data & Updates"
+    secondary: "Configure how often data is refreshed"
+    icon: mdi:update
+    icon_color: green
+    layout: horizontal
+    fill_container: true
+
+  - type: entities
+    title: "Update Settings"
+    entities:
+      - entity: input_select.hamclock_update_interval
+        name: "Update Interval"
+      - entity: sensor.hamclock_kp_index
+        name: "Last Kp Update"
+        secondary_info: last-updated
+      - entity: sensor.hamclock_xray_flux
+        name: "Last X-ray Update"
+        secondary_info: last-updated
+
+  # Alert Thresholds
+  - type: custom:mushroom-template-card
+    primary: "Alert Thresholds"
+    secondary: "Set when you want to be notified"
+    icon: mdi:bell-alert
+    icon_color: orange
+    layout: horizontal
+    fill_container: true
+
+  - type: entities
+    title: "Alert Settings"
+    entities:
+      - entity: input_number.hamclock_kp_threshold
+        name: "Kp Alert Threshold"
+      - entity: input_number.hamclock_xray_threshold
+        name: "X-ray Alert Threshold"
+      - entity: input_number.hamclock_sfi_threshold
+        name: "SFI Good Propagation Threshold"
+      - entity: input_boolean.hamclock_show_alerts
+        name: "Enable Pushover Alerts"
+
+  # Feature Toggles
+  - type: custom:mushroom-template-card
+    primary: "Features"
+    secondary: "Enable or disable specific features"
+    icon: mdi:feature-search
+    icon_color: cyan
+    layout: horizontal
+    fill_container: true
+
+  - type: entities
+    title: "Feature Settings"
+    entities:
+      - entity: input_boolean.hamclock_show_aurora
+        name: "Show Aurora Predictions"
+      - entity: input_boolean.hamclock_show_propagation
+        name: "Show Propagation Predictions"
+
+  # Current Status
+  - type: custom:mushroom-template-card
+    primary: "Current Status"
+    secondary: "Real-time monitoring status"
+    icon: mdi:monitor-dashboard
+    icon_color: blue
+    layout: horizontal
+    fill_container: true
+
+  - type: entities
+    title: "Status Overview"
+    entities:
+      - entity: sensor.hamclock_alert_status
+        name: "Alert Status"
+      - entity: sensor.hamclock_propagation_status
+        name: "Propagation Status"
+      - entity: sensor.hamclock_aurora_activity
+        name: "Aurora Activity"
+
+  # Quick Actions
+  - type: custom:mushroom-template-card
+    primary: "Quick Actions"
+    secondary: "Common configuration tasks"
+    icon: mdi:lightning-bolt
+    icon_color: yellow
+    layout: horizontal
+    fill_container: true
+
+  - type: entities
+    title: "Actions"
+    entities:
+      - entity: script.hamclock_reset_to_defaults
+        name: "Reset to Defaults"
+        icon: mdi:restore
+      - entity: script.hamclock_test_alerts
+        name: "Test Alerts"
+        icon: mdi:bell-ring
+
+  # Navigation
+  - type: custom:mushroom-template-card
+    primary: "Navigation"
+    secondary: "Return to HamClock dashboards"
+    icon: mdi:arrow-left
+    icon_color: grey
+    tap_action:
+      action: navigate
+      navigation_path: /lovelace/hamclock-overview
+    layout: horizontal
+    fill_container: true
+
+  # Information
+  - type: markdown
+    content: |
+      ## 📋 Configuration Guide
+
+      **Theme Options:**
+      - **Default**: Standard Home Assistant theme
+      - **Dark**: Dark mode optimized for low light
+      - **Light**: Bright theme for daytime use
+      - **High Contrast**: Enhanced visibility
+
+      **Display Modes:**
+      - **Compact**: Minimal information, maximum density
+      - **Standard**: Balanced view with key metrics
+      - **Detailed**: Full information with trends
+
+      **Update Intervals:**
+      - **5 minutes**: Real-time monitoring (high data usage)
+      - **15 minutes**: Recommended balance
+      - **30 minutes**: Lower data usage
+      - **1 hour**: Minimal updates
+
+      **Alert Thresholds:**
+      - **Kp Index**: Geomagnetic activity (0-9 scale)
+      - **X-ray Flux**: Solar flare intensity
+      - **SFI**: Solar flux for propagation prediction
+
+      Changes are applied immediately. Use "Reset to Defaults" to restore original settings.

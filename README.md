@@ -9,6 +9,9 @@ A comprehensive Home Assistant integration that replicates HamClock's space weat
 - **Real-time Space Weather Monitoring**: Kp index, X-ray flux, solar flux index, and solar wind data
 - **Modern Lovelace Dashboards**: ApexCharts visualizations and Mushroom card interfaces
 - **Automated Alerts**: Pushover notifications for geomagnetic storms, solar flares, and propagation changes
+- **Comprehensive Configuration**: Customizable themes, thresholds, update intervals, and display modes
+- **Advanced Visual Elements**: Color-coded conditions, trend indicators, propagation predictions, and aurora forecasts
+- **Multiple Dashboard Views**: Overview, detailed, advanced, and settings dashboards
 - **Comprehensive Documentation**: Detailed setup guides, API documentation, and troubleshooting
 - **Modular Architecture**: Organized packages for easy customization and maintenance
 
@@ -26,6 +29,34 @@ A comprehensive Home Assistant integration that replicates HamClock's space weat
 ### Solar Wind
 - **Wind Speed**: Solar wind velocity (ACE satellite data)
 - **Activity Status**: Low, moderate, high classification
+
+## 📱 Dashboard Views
+
+### Overview Dashboard
+- **Quick Status**: Current space weather conditions at a glance
+- **Key Metrics**: Kp index, X-ray class, Solar Flux, and Solar Wind
+- **Trend Chart**: 48-hour Kp index visualization
+- **Navigation**: Easy access to detailed views
+
+### Detailed Dashboard
+- **Comprehensive Charts**: 72-hour trends for all metrics
+- **Individual Visualizations**: Dedicated charts for each parameter
+- **Logarithmic Scaling**: Proper X-ray flux visualization
+- **Full Data Range**: Complete historical context
+
+### Advanced Dashboard
+- **Smart Status**: Intelligent condition assessment
+- **Propagation Predictions**: Band condition forecasting
+- **Aurora Activity**: Real-time aurora predictions
+- **Color-Coded Alerts**: Visual status indicators
+- **Trend Analysis**: 24-hour comprehensive trends
+
+### Settings Dashboard
+- **Theme Configuration**: Multiple visual themes
+- **Alert Thresholds**: Customizable notification levels
+- **Update Intervals**: Configurable data refresh rates
+- **Feature Toggles**: Enable/disable specific features
+- **Quick Actions**: Reset defaults and test alerts
 
 ## 🚀 Quick Start
 

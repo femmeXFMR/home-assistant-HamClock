@@ -1,0 +1,234 @@
+# HamClock Configuration Package
+# This package allows users to customize HamClock settings
+
+# Input selectors for configuration
+input_select:
+  hamclock_theme:
+    name: "HamClock Theme"
+    options:
+      - "Default"
+      - "Dark"
+      - "Light"
+      - "High Contrast"
+    initial: "Default"
+    icon: mdi:palette
+
+  hamclock_update_interval:
+    name: "Update Interval"
+    options:
+      - "5 minutes"
+      - "15 minutes"
+      - "30 minutes"
+      - "1 hour"
+    initial: "15 minutes"
+    icon: mdi:update
+
+  hamclock_display_mode:
+    name: "Display Mode"
+    options:
+      - "Compact"
+      - "Standard"
+      - "Detailed"
+    initial: "Standard"
+    icon: mdi:view-dashboard
+
+# Input numbers for alert thresholds
+input_number:
+  hamclock_kp_threshold:
+    name: "Kp Alert Threshold"
+    min: 0
+    max: 9
+    step: 0.1
+    initial: 6
+    unit_of_measurement: "Kp"
+    icon: mdi:alert-circle
+
+  hamclock_xray_threshold:
+    name: "X-ray Alert Threshold"
+    min: 1e-8
+    max: 1e-3
+    step: 1e-8
+    initial: 1e-5
+    unit_of_measurement: "W/m²"
+    icon: mdi:flash
+
+  hamclock_sfi_threshold:
+    name: "SFI Good Propagation Threshold"
+    min: 50
+    max: 300
+    step: 10
+    initial: 150
+    unit_of_measurement: "SFU"
+    icon: mdi:radio
+
+# Input booleans for feature toggles
+input_boolean:
+  hamclock_show_aurora:
+    name: "Show Aurora Predictions"
+    initial: true
+    icon: mdi:weather-night
+
+  hamclock_show_propagation:
+    name: "Show Propagation Predictions"
+    initial: true
+    icon: mdi:radio
+
+  hamclock_show_trends:
+    name: "Show Trend Indicators"
+    initial: true
+    icon: mdi:trending-up
+
+  hamclock_show_alerts:
+    name: "Enable Pushover Alerts"
+    initial: true
+    icon: mdi:bell
+
+  hamclock_compact_mode:
+    name: "Compact Dashboard Mode"
+    initial: false
+    icon: mdi:view-compact
+
+# Template sensors for derived values
+template:
+  - sensor:
+      - name: "HamClock Propagation Status"
+        state: >
+          {% set sfi = states('sensor.hamclock_sfi') | float(0) %}
+          {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+          {% if sfi >= states('input_number.hamclock_sfi_threshold') | float(150) and kp <= 2 %}
+            Excellent
+          {% elif sfi >= 100 and kp <= 3 %}
+            Good
+          {% elif sfi >= 50 and kp <= 4 %}
+            Fair
+          {% else %}
+            Poor
+          {% endif %}
+        attributes:
+          sfi_value: "{{ states('sensor.hamclock_sfi') }}"
+          kp_value: "{{ states('sensor.hamclock_kp_index') }}"
+          last_updated: "{{ now() }}"
+
+      - name: "HamClock Aurora Activity"
+        state: >
+          {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+          {% if kp >= 7 %}
+            High
+          {% elif kp >= 5 %}
+            Moderate
+          {% elif kp >= 3 %}
+            Low
+          {% else %}
+            None
+          {% endif %}
+        attributes:
+          kp_value: "{{ states('sensor.hamclock_kp_index') }}"
+          visibility: >
+            {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+            {% if kp >= 7 %}
+              Visible to mid-latitudes
+            {% elif kp >= 5 %}
+              Visible to high latitudes
+            {% elif kp >= 3 %}
+              Possible at high latitudes
+            {% else %}
+              No aurora expected
+            {% endif %}
+
+      - name: "HamClock Alert Status"
+        state: >
+          {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+          {% set xray = states('sensor.hamclock_xray_flux') | float(0) %}
+          {% set kp_threshold = states('input_number.hamclock_kp_threshold') | float(6) %}
+          {% set xray_threshold = states('input_number.hamclock_xray_threshold') | float(1e-5) %}
+          {% if kp >= kp_threshold or xray >= xray_threshold %}
+            Alert
+          {% elif kp >= kp_threshold - 1 or xray >= xray_threshold / 10 %}
+            Watch
+          {% else %}
+            Normal
+          {% endif %}
+        attributes:
+          kp_status: >
+            {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+            {% set threshold = states('input_number.hamclock_kp_threshold') | float(6) %}
+            {% if kp >= threshold %}
+              Above threshold ({{ kp }} >= {{ threshold }})
+            {% else %}
+              Below threshold ({{ kp }} < {{ threshold }})
+            {% endif %}
+          xray_status: >
+            {% set xray = states('sensor.hamclock_xray_flux') | float(0) %}
+            {% set threshold = states('input_number.hamclock_xray_threshold') | float(1e-5) %}
+            {% if xray >= threshold %}
+              Above threshold
+            {% else %}
+              Below threshold
+            {% endif %}
+
+# Automation to update scan intervals based on user preference
+automation:
+  - alias: "HamClock Update Scan Interval"
+    trigger:
+      - platform: state
+        entity_id: input_select.hamclock_update_interval
+    action:
+      - service: homeassistant.reload_config_entry
+        data:
+          entry_id: "hamclock_rest_sensors"
+
+# Scripts for common actions
+script:
+  hamclock_reset_to_defaults:
+    alias: "Reset HamClock to Defaults"
+    sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.hamclock_theme
+        data:
+          option: "Default"
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.hamclock_update_interval
+        data:
+          option: "15 minutes"
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.hamclock_display_mode
+        data:
+          option: "Standard"
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.hamclock_kp_threshold
+        data:
+          value: 6
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.hamclock_xray_threshold
+        data:
+          value: 1e-5
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.hamclock_sfi_threshold
+        data:
+          value: 150
+      - service: input_boolean.turn_on
+        target:
+          entity_id:
+            - input_boolean.hamclock_show_aurora
+            - input_boolean.hamclock_show_propagation
+            - input_boolean.hamclock_show_trends
+            - input_boolean.hamclock_show_alerts
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.hamclock_compact_mode
+
+  hamclock_test_alerts:
+    alias: "Test HamClock Alerts"
+    sequence:
+      - service: notify.pushover
+        data:
+          title: "HamClock Test Alert"
+          message: "This is a test of the HamClock alert system. All systems are working correctly."
+          data:
+            priority: 0
