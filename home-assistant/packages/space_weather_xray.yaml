@@ -1,0 +1,99 @@
+# HamClock → Home Assistant Bridge
+# GOES X-ray Flux and Classification Package
+# 
+# This package provides real-time solar X-ray monitoring
+# using NOAA's GOES satellite data feeds.
+
+rest:
+  # Source: https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+  # Schema: Array of objects with time_tag, flux fields
+  # Units: X-ray flux in W/m²
+  # Updated: Every 1 minute by NOAA GOES
+  - resource: https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+    scan_interval: 900  # 15 minutes - conservative polling
+    sensor:
+      - name: hamclock_xray_flux
+        unique_id: hamclock_xray_flux
+        value_template: >
+          {% set last = (value_json | sort(attribute='time_tag') | last) %}
+          {{ last['flux'] if last else None }}
+        json_attributes_path: "$[-1]"
+        json_attributes:
+          - time_tag
+          - flux
+        availability_template: "{{ value_json | length > 0 }}"
+        unit_of_measurement: "W/m²"
+        device_class: measurement
+        state_class: measurement
+
+template:
+  # X-ray Class - derived from flux value
+  # Classification: A (<1e-7), B (1e-7 to 1e-6), C (1e-6 to 1e-5), M (1e-5 to 1e-4), X (≥1e-4)
+  - sensor:
+      - name: hamclock_xray_class
+        unique_id: hamclock_xray_class
+        state: >
+          {% set f = states('sensor.hamclock_xray_flux') | float(0) %}
+          {% if f >= 1e-4 %}X
+          {% elif f >= 1e-5 %}M
+          {% elif f >= 1e-6 %}C
+          {% elif f >= 1e-7 %}B
+          {% else %}A
+          {% endif %}
+        attributes:
+          flux_value: "{{ states('sensor.hamclock_xray_flux') }}"
+          last_updated: "{{ states('sensor.hamclock_xray_flux').attributes.time_tag }}"
+          source: "NOAA GOES"
+          units: "X-ray class"
+          classification_thresholds:
+            A: "< 1e-7 W/m²"
+            B: "1e-7 to 1e-6 W/m²"
+            C: "1e-6 to 1e-5 W/m²"
+            M: "1e-5 to 1e-4 W/m²"
+            X: "≥ 1e-4 W/m²"
+
+  # X-ray Class Color for UI theming
+  - sensor:
+      - name: hamclock_xray_color
+        unique_id: hamclock_xray_color
+        state: >
+          {% set f = states('sensor.hamclock_xray_flux') | float(0) %}
+          {% if f >= 1e-4 %}red
+          {% elif f >= 1e-5 %}orange
+          {% elif f >= 1e-6 %}yellow
+          {% else %}green
+          {% endif %}
+        attributes:
+          flux_value: "{{ states('sensor.hamclock_xray_flux') }}"
+          class_value: "{{ states('sensor.hamclock_xray_class') }}"
+          threshold_green: "A, B class"
+          threshold_yellow: "C class"
+          threshold_orange: "M class"
+          threshold_red: "X class"
+
+  # X-ray Activity Status
+  - sensor:
+      - name: hamclock_xray_status
+        unique_id: hamclock_xray_status
+        state: >
+          {% set f = states('sensor.hamclock_xray_flux') | float(0) %}
+          {% if f >= 1e-4 %}Major Flare
+          {% elif f >= 1e-5 %}Moderate Flare
+          {% elif f >= 1e-6 %}Minor Flare
+          {% else %}Quiet
+          {% endif %}
+        attributes:
+          flux_value: "{{ states('sensor.hamclock_xray_flux') }}"
+          class_value: "{{ states('sensor.hamclock_xray_class') }}"
+          last_updated: "{{ states('sensor.hamclock_xray_flux').attributes.time_tag }}"
+          source: "NOAA GOES"
+
+# Group for organization
+group:
+  hamclock_xray_group:
+    name: "HamClock X-ray Data"
+    entities:
+      - sensor.hamclock_xray_flux
+      - sensor.hamclock_xray_class
+      - sensor.hamclock_xray_color
+      - sensor.hamclock_xray_status

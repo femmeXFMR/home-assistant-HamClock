@@ -1,0 +1,119 @@
+# HamClock → Home Assistant Bridge
+# Solar Wind Speed Package
+# 
+# This package provides real-time solar wind monitoring
+# using NOAA's ACE satellite data feeds.
+
+rest:
+  # Source: https://services.swpc.noaa.gov/json/ace/ace-swepam-1h.json
+  # Schema: Array of objects with time_tag, speed fields
+  # Units: km/s
+  # Updated: Every 1 hour by NOAA ACE
+  - resource: https://services.swpc.noaa.gov/json/ace/ace-swepam-1h.json
+    scan_interval: 900  # 15 minutes - conservative polling
+    sensor:
+      - name: hamclock_solar_wind_speed
+        unique_id: hamclock_solar_wind_speed
+        value_template: >
+          {% set last = (value_json | sort(attribute='time_tag') | last) %}
+          {{ (last.speed | float(0) | round(0)) if last else None }}
+        json_attributes_path: "$[-1]"
+        json_attributes:
+          - time_tag
+          - speed
+        availability_template: "{{ value_json | length > 0 }}"
+        unit_of_measurement: "km/s"
+        device_class: measurement
+        state_class: measurement
+
+  # Source: https://services.swpc.noaa.gov/json/ace/ace-mag-1h.json
+  # Schema: Array of objects with time_tag, bz_gsm fields
+  # Units: nT (nanotesla)
+  # Updated: Every 1 hour by NOAA ACE
+  - resource: https://services.swpc.noaa.gov/json/ace/ace-mag-1h.json
+    scan_interval: 900  # 15 minutes - conservative polling
+    sensor:
+      - name: hamclock_bz_gsm
+        unique_id: hamclock_bz_gsm
+        value_template: >
+          {% set last = (value_json | sort(attribute='time_tag') | last) %}
+          {{ (last.bz_gsm | float(0) | round(1)) if last else None }}
+        json_attributes_path: "$[-1]"
+        json_attributes:
+          - time_tag
+          - bz_gsm
+        availability_template: "{{ value_json | length > 0 }}"
+        unit_of_measurement: "nT"
+        device_class: measurement
+        state_class: measurement
+
+template:
+  # Solar Wind Status - activity level
+  - sensor:
+      - name: hamclock_solar_wind_status
+        unique_id: hamclock_solar_wind_status
+        state: >
+          {% set speed = states('sensor.hamclock_solar_wind_speed') | float(0) %}
+          {% if speed >= 600 %}High
+          {% elif speed >= 400 %}Moderate
+          {% else %}Low
+          {% endif %}
+        attributes:
+          speed_value: "{{ states('sensor.hamclock_solar_wind_speed') }}"
+          last_updated: "{{ states('sensor.hamclock_solar_wind_speed').attributes.time_tag }}"
+          source: "NOAA ACE"
+          units: "km/s"
+          activity_levels:
+            "Low": "< 400 km/s"
+            "Moderate": "400-599 km/s"
+            "High": "≥ 600 km/s"
+
+  # Bz GSM Status - geomagnetic coupling
+  - sensor:
+      - name: hamclock_bz_status
+        unique_id: hamclock_bz_status
+        state: >
+          {% set bz = states('sensor.hamclock_bz_gsm') | float(0) %}
+          {% if bz <= -10 %}Strong South
+          {% elif bz <= -5 %}Moderate South
+          {% elif bz >= 5 %}North
+          {% else %}Neutral
+          {% endif %}
+        attributes:
+          bz_value: "{{ states('sensor.hamclock_bz_gsm') }}"
+          last_updated: "{{ states('sensor.hamclock_bz_gsm').attributes.time_tag }}"
+          source: "NOAA ACE"
+          units: "nT"
+          coupling_conditions:
+            "Strong South": "≤ -10 nT (strong coupling)"
+            "Moderate South": "-10 to -5 nT (moderate coupling)"
+            "Neutral": "-5 to 5 nT (weak coupling)"
+            "North": "≥ 5 nT (no coupling)"
+
+  # Solar Wind Color for UI theming
+  - sensor:
+      - name: hamclock_solar_wind_color
+        unique_id: hamclock_solar_wind_color
+        state: >
+          {% set speed = states('sensor.hamclock_solar_wind_speed') | float(0) %}
+          {% if speed >= 600 %}red
+          {% elif speed >= 400 %}yellow
+          {% else %}green
+          {% endif %}
+        attributes:
+          speed_value: "{{ states('sensor.hamclock_solar_wind_speed') }}"
+          status: "{{ states('sensor.hamclock_solar_wind_status') }}"
+          threshold_low: "< 400 km/s"
+          threshold_moderate: "400-599 km/s"
+          threshold_high: "≥ 600 km/s"
+
+# Group for organization
+group:
+  hamclock_solar_wind_group:
+    name: "HamClock Solar Wind Data"
+    entities:
+      - sensor.hamclock_solar_wind_speed
+      - sensor.hamclock_solar_wind_status
+      - sensor.hamclock_solar_wind_color
+      - sensor.hamclock_bz_gsm
+      - sensor.hamclock_bz_status

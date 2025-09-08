@@ -1,0 +1,227 @@
+# HamClock → Home Assistant Bridge
+# Automations Package - Space Weather Alerts
+# 
+# This package provides automated alerts for significant space weather events
+# including geomagnetic storms, solar flares, and propagation changes.
+
+automation:
+  # High Kp Index Alert - Geomagnetic Storm
+  - alias: "HamClock Alert - High Kp Index"
+    description: "Alert when Kp index reaches storm levels (≥6)"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.hamclock_kp_index
+        above: 5.9
+        for:
+          minutes: 5  # Require sustained high values
+    condition:
+      - condition: state
+        entity_id: sensor.hamclock_kp_index
+        state: "unavailable"
+        for:
+          minutes: 1
+        invert: true
+    action:
+      - service: notify.persistent_notification
+        data:
+          title: "🌩️ Geomagnetic Storm Alert"
+          message: >
+            Kp index is {{ states('sensor.hamclock_kp_index') }} - 
+            Geomagnetic storm conditions detected!
+            Activity level: {{ states('sensor.hamclock_kp_status') }}
+            Last updated: {{ state_attr('sensor.hamclock_kp_index', 'time_tag') }}
+          notification_id: "hamclock_kp_storm"
+      - service: notify.pushover
+        data:
+          title: "🌩️ HamClock Geomagnetic Storm"
+          message: >
+            Kp {{ states('sensor.hamclock_kp_index') }} - Storm conditions!
+            Activity: {{ states('sensor.hamclock_kp_status') }}
+          priority: 1
+          sound: "spacealarm"
+    mode: single
+
+  # Major X-ray Flare Alert
+  - alias: "HamClock Alert - Major X-ray Flare"
+    description: "Alert when X-ray class reaches M or X level"
+    trigger:
+      - platform: state
+        entity_id: sensor.hamclock_xray_class
+        to: ["M", "X"]
+    condition:
+      - condition: state
+        entity_id: sensor.hamclock_xray_class
+        state: "unavailable"
+        for:
+          minutes: 1
+        invert: true
+    action:
+      - service: notify.persistent_notification
+        data:
+          title: "☀️ Solar Flare Alert"
+          message: >
+            X-ray class {{ states('sensor.hamclock_xray_class') }} flare detected!
+            Flux: {{ states('sensor.hamclock_xray_flux') }} W/m²
+            Activity: {{ states('sensor.hamclock_xray_status') }}
+            Last updated: {{ state_attr('sensor.hamclock_xray_flux', 'time_tag') }}
+          notification_id: "hamclock_xray_flare"
+      - service: notify.pushover
+        data:
+          title: "☀️ HamClock Solar Flare"
+          message: >
+            {{ states('sensor.hamclock_xray_class') }} class flare!
+            Flux: {{ states('sensor.hamclock_xray_flux') }} W/m²
+          priority: 1
+          sound: "spacealarm"
+    mode: single
+
+  # High Solar Wind Alert
+  - alias: "HamClock Alert - High Solar Wind"
+    description: "Alert when solar wind speed exceeds 600 km/s"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.hamclock_solar_wind_speed
+        above: 599
+        for:
+          minutes: 10  # Require sustained high values
+    condition:
+      - condition: state
+        entity_id: sensor.hamclock_solar_wind_speed
+        state: "unavailable"
+        for:
+          minutes: 1
+        invert: true
+    action:
+      - service: notify.persistent_notification
+        data:
+          title: "💨 High Solar Wind Alert"
+          message: >
+            Solar wind speed is {{ states('sensor.hamclock_solar_wind_speed') }} km/s
+            Activity level: {{ states('sensor.hamclock_solar_wind_status') }}
+            Last updated: {{ state_attr('sensor.hamclock_solar_wind_speed', 'time_tag') }}
+          notification_id: "hamclock_solar_wind_high"
+      - service: notify.pushover
+        data:
+          title: "💨 HamClock High Solar Wind"
+          message: >
+            Solar wind: {{ states('sensor.hamclock_solar_wind_speed') }} km/s
+            Activity: {{ states('sensor.hamclock_solar_wind_status') }}
+          priority: 0
+          sound: "pushover"
+    mode: single
+
+  # Strong South Bz Alert - Geomagnetic Coupling
+  - alias: "HamClock Alert - Strong South Bz"
+    description: "Alert when Bz GSM is strongly south (≤-10 nT)"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.hamclock_bz_gsm
+        below: -9.9
+        for:
+          minutes: 5  # Require sustained south values
+    condition:
+      - condition: state
+        entity_id: sensor.hamclock_bz_gsm
+        state: "unavailable"
+        for:
+          minutes: 1
+        invert: true
+    action:
+      - service: notify.persistent_notification
+        data:
+          title: "🧲 Strong Geomagnetic Coupling"
+          message: >
+            Bz GSM is {{ states('sensor.hamclock_bz_gsm') }} nT
+            Status: {{ states('sensor.hamclock_bz_status') }}
+            Strong geomagnetic coupling detected!
+            Last updated: {{ state_attr('sensor.hamclock_bz_gsm', 'time_tag') }}
+          notification_id: "hamclock_bz_south"
+      - service: notify.pushover
+        data:
+          title: "🧲 HamClock Strong Bz South"
+          message: >
+            Bz: {{ states('sensor.hamclock_bz_gsm') }} nT
+            Status: {{ states('sensor.hamclock_bz_status') }}
+          priority: 1
+          sound: "spacealarm"
+    mode: single
+
+  # Poor Propagation Conditions Alert
+  - alias: "HamClock Alert - Poor Propagation"
+    description: "Alert when SFI indicates poor propagation conditions"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.hamclock_sfi
+        below: 70
+        for:
+          minutes: 30  # Require sustained poor conditions
+    condition:
+      - condition: state
+        entity_id: sensor.hamclock_sfi
+        state: "unavailable"
+        for:
+          minutes: 1
+        invert: true
+    action:
+      - service: notify.persistent_notification
+        data:
+          title: "📻 Poor Propagation Conditions"
+          message: >
+            SFI is {{ states('sensor.hamclock_sfi') }} SFU
+            Propagation: {{ states('sensor.hamclock_sfi_status') }}
+            HF propagation conditions are poor.
+            Last updated: {{ state_attr('sensor.hamclock_sfi_raw', 'time_tag') }}
+          notification_id: "hamclock_poor_propagation"
+      - service: notify.pushover
+        data:
+          title: "📻 HamClock Poor Propagation"
+          message: >
+            SFI: {{ states('sensor.hamclock_sfi') }} SFU
+            Propagation: {{ states('sensor.hamclock_sfi_status') }}
+          priority: 0
+          sound: "pushover"
+    mode: single
+
+  # Data Update Notification (Daily Summary)
+  - alias: "HamClock Daily Summary"
+    description: "Daily summary of space weather conditions"
+    trigger:
+      - platform: time
+        at: "08:00:00"
+    action:
+      - service: notify.persistent_notification
+        data:
+          title: "🌞 HamClock Daily Space Weather Summary"
+          message: >
+            **Current Conditions:**
+            • Kp Index: {{ states('sensor.hamclock_kp_index') }} ({{ states('sensor.hamclock_kp_status') }})
+            • X-ray Class: {{ states('sensor.hamclock_xray_class') }} ({{ states('sensor.hamclock_xray_status') }})
+            • Solar Flux: {{ states('sensor.hamclock_sfi') }} SFU ({{ states('sensor.hamclock_sfi_status') }})
+            • Solar Wind: {{ states('sensor.hamclock_solar_wind_speed') }} km/s ({{ states('sensor.hamclock_solar_wind_status') }})
+            • Bz GSM: {{ states('sensor.hamclock_bz_gsm') }} nT ({{ states('sensor.hamclock_bz_status') }})
+            
+            **Last Updated:** {{ now().strftime('%Y-%m-%d %H:%M UTC') }}
+          notification_id: "hamclock_daily_summary"
+    mode: single
+
+# Input boolean for alert control
+input_boolean:
+  hamclock_alerts_enabled:
+    name: "HamClock Alerts Enabled"
+    initial: true
+    icon: mdi:bell
+
+# Script to toggle alerts
+script:
+  hamclock_toggle_alerts:
+    alias: "Toggle HamClock Alerts"
+    sequence:
+      - service: input_boolean.toggle
+        entity_id: input_boolean.hamclock_alerts_enabled
+      - service: notify.persistent_notification
+        data:
+          title: "HamClock Alerts"
+          message: >
+            Alerts are now {{ 'enabled' if is_state('input_boolean.hamclock_alerts_enabled', 'on') else 'disabled' }}
+          notification_id: "hamclock_alerts_toggle"
+    icon: mdi:bell

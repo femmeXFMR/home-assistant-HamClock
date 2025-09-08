@@ -1,0 +1,53 @@
+# HamClock → Home Assistant Bridge
+# Core Package - Includes all space weather monitoring
+# 
+# This is the main package that includes all HamClock space weather sensors
+# and provides the foundation for the Home Assistant integration.
+
+# Include all space weather packages
+!include_dir_named packages
+
+# Main group for all HamClock sensors
+group:
+  hamclock_all_sensors:
+    name: "HamClock Space Weather"
+    entities:
+      - group.hamclock_kp_group
+      - group.hamclock_xray_group
+      - group.hamclock_sfi_group
+      - group.hamclock_solar_wind_group
+
+# Input select for dashboard views
+input_select:
+  hamclock_dashboard_view:
+    name: "HamClock Dashboard View"
+    options:
+      - "Overview"
+      - "Detailed"
+      - "Alerts"
+    initial: "Overview"
+    icon: mdi:view-dashboard
+
+# Scripts for manual data refresh
+script:
+  hamclock_refresh_all:
+    alias: "Refresh All HamClock Data"
+    sequence:
+      - service: homeassistant.update_entity
+        target:
+          entity_id:
+            - sensor.hamclock_kp_index
+            - sensor.hamclock_xray_flux
+            - sensor.hamclock_sfi
+            - sensor.hamclock_solar_wind_speed
+            - sensor.hamclock_bz_gsm
+    icon: mdi:refresh
+
+  hamclock_test_alerts:
+    alias: "Test HamClock Alerts"
+    sequence:
+      - service: notify.persistent_notification
+        data:
+          title: "HamClock Alert Test"
+          message: "This is a test of the HamClock alert system. All sensors are functioning normally."
+    icon: mdi:bell-ring

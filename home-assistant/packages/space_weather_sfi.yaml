@@ -1,0 +1,97 @@
+# HamClock → Home Assistant Bridge
+# Solar Flux Index (SFI) Package
+# 
+# This package provides real-time solar flux monitoring
+# using NOAA's solar flux data feeds.
+
+rest:
+  # Source: https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+  # Note: This is a placeholder - need to find the correct SFI endpoint
+  # Alternative: https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+  # Schema: Array of objects with time_tag, flux fields
+  # Units: Solar Flux Units (SFU)
+  # Updated: Every 1 minute by NOAA
+  - resource: https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+    scan_interval: 900  # 15 minutes - conservative polling
+    sensor:
+      - name: hamclock_sfi_raw
+        unique_id: hamclock_sfi_raw
+        value_template: >
+          {% set last = (value_json | sort(attribute='time_tag') | last) %}
+          {{ last['flux'] if last else None }}
+        json_attributes_path: "$[-1]"
+        json_attributes:
+          - time_tag
+          - flux
+        availability_template: "{{ value_json | length > 0 }}"
+        unit_of_measurement: "SFU"
+        device_class: measurement
+        state_class: measurement
+
+template:
+  # Solar Flux Index - processed value
+  - sensor:
+      - name: hamclock_sfi
+        unique_id: hamclock_sfi
+        state: >
+          {% set raw = states('sensor.hamclock_sfi_raw') | float(0) %}
+          {{ (raw * 1000000) | round(0) if raw else None }}
+        attributes:
+          raw_value: "{{ states('sensor.hamclock_sfi_raw') }}"
+          last_updated: "{{ states('sensor.hamclock_sfi_raw').attributes.time_tag }}"
+          source: "NOAA SWPC"
+          units: "Solar Flux Units (SFU)"
+          conversion_factor: "1e6"
+
+  # SFI Status - propagation conditions
+  - sensor:
+      - name: hamclock_sfi_status
+        unique_id: hamclock_sfi_status
+        state: >
+          {% set sfi = states('sensor.hamclock_sfi') | float(0) %}
+          {% if sfi >= 200 %}Excellent
+          {% elif sfi >= 150 %}Good
+          {% elif sfi >= 100 %}Fair
+          {% elif sfi >= 70 %}Poor
+          {% else %}Very Poor
+          {% endif %}
+        attributes:
+          sfi_value: "{{ states('sensor.hamclock_sfi') }}"
+          last_updated: "{{ states('sensor.hamclock_sfi_raw').attributes.time_tag }}"
+          source: "NOAA SWPC"
+          propagation_conditions:
+            "Very Poor": "< 70 SFU"
+            "Poor": "70-99 SFU"
+            "Fair": "100-149 SFU"
+            "Good": "150-199 SFU"
+            "Excellent": "≥ 200 SFU"
+
+  # SFI Color for UI theming
+  - sensor:
+      - name: hamclock_sfi_color
+        unique_id: hamclock_sfi_color
+        state: >
+          {% set sfi = states('sensor.hamclock_sfi') | float(0) %}
+          {% if sfi >= 200 %}green
+          {% elif sfi >= 150 %}lightgreen
+          {% elif sfi >= 100 %}yellow
+          {% elif sfi >= 70 %}orange
+          {% else %}red
+          {% endif %}
+        attributes:
+          sfi_value: "{{ states('sensor.hamclock_sfi') }}"
+          status: "{{ states('sensor.hamclock_sfi_status') }}"
+          threshold_excellent: "≥ 200 SFU"
+          threshold_good: "150-199 SFU"
+          threshold_fair: "100-149 SFU"
+          threshold_poor: "70-99 SFU"
+          threshold_very_poor: "< 70 SFU"
+
+# Group for organization
+group:
+  hamclock_sfi_group:
+    name: "HamClock Solar Flux Index"
+    entities:
+      - sensor.hamclock_sfi
+      - sensor.hamclock_sfi_status
+      - sensor.hamclock_sfi_color

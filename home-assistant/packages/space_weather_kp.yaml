@@ -1,0 +1,70 @@
+# HamClock → Home Assistant Bridge
+# Kp Index and Geomagnetic Data Package
+# 
+# This package provides real-time geomagnetic activity monitoring
+# using NOAA's planetary K index data feeds.
+
+rest:
+  # Source: https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+  # Schema: Array of objects with time_tag, kp_index fields
+  # Units: Kp index (unitless, 0-9 scale)
+  # Updated: Every 1 minute by NOAA
+  - resource: https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+    scan_interval: 900  # 15 minutes - conservative polling
+    sensor:
+      - name: hamclock_kp_index
+        unique_id: hamclock_kp_index
+        value_template: >
+          {% set last = (value_json | sort(attribute='time_tag') | last) %}
+          {{ (last.kp_index | float(0) | round(1)) if last else None }}
+        json_attributes_path: "$[-1]"
+        json_attributes:
+          - time_tag
+          - kp_index
+        availability_template: "{{ value_json | length > 0 }}"
+        unit_of_measurement: "Kp"
+        device_class: measurement
+        state_class: measurement
+
+template:
+  # Kp Index Status - human readable classification
+  - sensor:
+      - name: hamclock_kp_status
+        unique_id: hamclock_kp_status
+        state: >
+          {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+          {% if kp >= 5 %}Storm
+          {% elif kp >= 4 %}Active
+          {% elif kp >= 3 %}Unsettled
+          {% else %}Quiet
+          {% endif %}
+        attributes:
+          kp_value: "{{ states('sensor.hamclock_kp_index') }}"
+          last_updated: "{{ states('sensor.hamclock_kp_index').attributes.time_tag }}"
+          source: "NOAA SWPC"
+          units: "Kp index"
+
+  # Kp Index Color for UI theming
+  - sensor:
+      - name: hamclock_kp_color
+        unique_id: hamclock_kp_color
+        state: >
+          {% set kp = states('sensor.hamclock_kp_index') | float(0) %}
+          {% if kp >= 5 %}red
+          {% elif kp >= 3 %}yellow
+          {% else %}green
+          {% endif %}
+        attributes:
+          kp_value: "{{ states('sensor.hamclock_kp_index') }}"
+          threshold_green: "≤2"
+          threshold_yellow: "3-4"
+          threshold_red: "≥5"
+
+# Group for organization
+group:
+  hamclock_kp_group:
+    name: "HamClock Kp Index"
+    entities:
+      - sensor.hamclock_kp_index
+      - sensor.hamclock_kp_status
+      - sensor.hamclock_kp_color
