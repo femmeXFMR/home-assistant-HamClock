@@ -1,0 +1,244 @@
+# HamClock Detailed Dashboard
+# Comprehensive space weather monitoring with detailed charts and data
+# 
+# This dashboard provides detailed views of all space weather metrics
+# with extended time ranges and additional sensor data.
+
+title: "HamClock Detailed View"
+path: "hamclock-details"
+icon: mdi:chart-line
+panel: false
+cards:
+  # Header
+  - type: markdown
+    content: |
+      # 📊 HamClock Detailed Space Weather Analysis
+      Comprehensive monitoring with extended time ranges and detailed metrics
+
+  # Multi-chart view with tabs
+  - type: custom:apexcharts-card
+    header:
+      title: "Space Weather Overview - 72 Hour Trends"
+      show: true
+    graph_span: 72h
+    update_interval: 5min
+    series:
+      - entity: sensor.hamclock_kp_index
+        name: "Kp Index"
+        type: line
+        stroke_width: 2
+        color: "#4488ff"
+        yaxis_id: "y"
+      - entity: sensor.hamclock_solar_wind_speed
+        name: "Solar Wind (km/s)"
+        type: line
+        stroke_width: 2
+        color: "#ff8800"
+        yaxis_id: "y2"
+      - entity: sensor.hamclock_bz_gsm
+        name: "Bz GSM (nT)"
+        type: line
+        stroke_width: 2
+        color: "#ff4444"
+        yaxis_id: "y3"
+    yaxis:
+      - id: "y"
+        min: 0
+        max: 9
+        decimals: 1
+        title:
+          text: "Kp Index"
+      - id: "y2"
+        min: 200
+        max: 800
+        decimals: 0
+        title:
+          text: "Solar Wind (km/s)"
+        opposite: true
+      - id: "y3"
+        min: -20
+        max: 20
+        decimals: 1
+        title:
+          text: "Bz GSM (nT)"
+    apex_config:
+      chart:
+        height: 300
+      stroke:
+        curve: smooth
+      markers:
+        size: 3
+
+  # X-ray Flux Chart
+  - type: custom:apexcharts-card
+    header:
+      title: "X-ray Flux - 24 Hour Trend"
+      show: true
+    graph_span: 24h
+    update_interval: 5min
+    series:
+      - entity: sensor.hamclock_xray_flux
+        name: "X-ray Flux"
+        type: line
+        stroke_width: 3
+        color: "#ff6600"
+        show:
+          extremas: true
+    yaxis:
+      - min: 0
+        decimals: 0
+        logarithmic: true
+    apex_config:
+      chart:
+        height: 200
+      stroke:
+        curve: smooth
+      markers:
+        size: 4
+      yaxis:
+        logarithmic: true
+
+  # Solar Flux Index Chart
+  - type: custom:apexcharts-card
+    header:
+      title: "Solar Flux Index - 7 Day Trend"
+      show: true
+    graph_span: 7d
+    update_interval: 5min
+    series:
+      - entity: sensor.hamclock_sfi
+        name: "SFI"
+        type: line
+        stroke_width: 2
+        color: "#00aa00"
+        show:
+          extremas: true
+    yaxis:
+      - min: 50
+        max: 300
+        decimals: 0
+    apex_config:
+      chart:
+        height: 200
+      stroke:
+        curve: smooth
+      markers:
+        size: 3
+
+  # Detailed sensor data in a grid
+  - type: grid
+    square: false
+    columns: 2
+    cards:
+      # Kp Index Details
+      - type: entities
+        title: "Kp Index Details"
+        entities:
+          - entity: sensor.hamclock_kp_index
+            name: "Current Kp"
+          - entity: sensor.hamclock_kp_status
+            name: "Activity Level"
+          - entity: sensor.hamclock_kp_color
+            name: "Status Color"
+          - type: attribute
+            entity: sensor.hamclock_kp_index
+            attribute: time_tag
+            name: "Last Updated"
+
+      # X-ray Details
+      - type: entities
+        title: "X-ray Activity Details"
+        entities:
+          - entity: sensor.hamclock_xray_flux
+            name: "X-ray Flux"
+          - entity: sensor.hamclock_xray_class
+            name: "Flare Class"
+          - entity: sensor.hamclock_xray_status
+            name: "Activity Status"
+          - entity: sensor.hamclock_xray_color
+            name: "Status Color"
+
+      # Solar Wind Details
+      - type: entities
+        title: "Solar Wind Details"
+        entities:
+          - entity: sensor.hamclock_solar_wind_speed
+            name: "Wind Speed"
+          - entity: sensor.hamclock_solar_wind_status
+            name: "Activity Level"
+          - entity: sensor.hamclock_bz_gsm
+            name: "Bz GSM"
+          - entity: sensor.hamclock_bz_status
+            name: "Coupling Status"
+
+      # SFI Details
+      - type: entities
+        title: "Solar Flux Index Details"
+        entities:
+          - entity: sensor.hamclock_sfi
+            name: "Current SFI"
+          - entity: sensor.hamclock_sfi_status
+            name: "Propagation"
+          - entity: sensor.hamclock_sfi_color
+            name: "Status Color"
+          - type: attribute
+            entity: sensor.hamclock_sfi_raw
+            attribute: time_tag
+            name: "Last Updated"
+
+  # Historical data summary
+  - type: custom:apexcharts-card
+    header:
+      title: "Historical Kp Index - 30 Day Average"
+      show: true
+    graph_span: 30d
+    update_interval: 1h
+    series:
+      - entity: sensor.hamclock_kp_index
+        name: "Kp Index"
+        type: line
+        stroke_width: 1
+        color: "#4488ff"
+        show:
+          extremas: true
+          fill: gradient
+    yaxis:
+      - min: 0
+        max: 9
+        decimals: 1
+    apex_config:
+      chart:
+        height: 200
+      stroke:
+        curve: smooth
+      fill:
+        type: gradient
+        gradient:
+          shade: light
+          type: vertical
+          shadeIntensity: 0.5
+          gradientToColors: ["#4488ff"]
+          inverseColors: false
+          opacityFrom: 0.3
+          opacityTo: 0.1
+
+  # Quick navigation
+  - type: horizontal-stack
+    cards:
+      - type: button
+        entity: script.hamclock_refresh_all
+        name: "Refresh All Data"
+        icon: mdi:refresh
+        tap_action:
+          action: call-service
+          service: script.hamclock_refresh_all
+      - type: button
+        entity: input_select.hamclock_dashboard_view
+        name: "Switch to Overview"
+        icon: mdi:view-dashboard
+        tap_action:
+          action: call-service
+          service: input_select.select_option
+          service_data:
+            entity_id: input_select.hamclock_dashboard_view
+            option: "Overview"

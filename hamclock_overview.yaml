@@ -1,0 +1,242 @@
+# HamClock Overview Dashboard
+# Modern Lovelace dashboard with essential space weather indicators
+# 
+# This dashboard provides a compact overview of the most important
+# space weather metrics with modern cards and visual indicators.
+
+title: "HamClock Space Weather"
+path: "hamclock-overview"
+icon: mdi:weather-sunny
+panel: false
+cards:
+  # Header with refresh button
+  - type: horizontal-stack
+    cards:
+      - type: markdown
+        content: |
+          # 🌞 HamClock Space Weather
+          Real-time space weather monitoring for amateur radio operators
+      - type: button
+        entity: script.hamclock_refresh_all
+        name: "Refresh Data"
+        icon: mdi:refresh
+        tap_action:
+          action: call-service
+          service: script.hamclock_refresh_all
+
+  # Essential metrics in a grid
+  - type: grid
+    square: false
+    columns: 3
+    cards:
+      # Kp Index - Geomagnetic Activity
+      - type: custom:mushroom-entity-card
+        entity: sensor.hamclock_kp_index
+        name: "Kp Index"
+        icon: mdi:magnet
+        primary_info: state
+        secondary_info: name
+        icon_color: |
+          [[[
+            if (entity.state >= 5) return 'red';
+            if (entity.state >= 3) return 'yellow';
+            return 'green';
+          ]]]
+        card_mod:
+          style: |
+            ha-card {
+              --card-mod-icon-color: [[[
+                if (entity.state >= 5) return '#ff4444';
+                if (entity.state >= 3) return '#ffaa00';
+                return '#44ff44';
+              ]]];
+            }
+
+      # X-ray Class - Solar Flare Activity
+      - type: custom:mushroom-entity-card
+        entity: sensor.hamclock_xray_class
+        name: "X-ray Class"
+        icon: mdi:flash
+        primary_info: state
+        secondary_info: name
+        icon_color: |
+          [[[
+            if (entity.state === 'X') return 'red';
+            if (entity.state === 'M') return 'orange';
+            if (entity.state === 'C') return 'yellow';
+            return 'green';
+          ]]]
+        card_mod:
+          style: |
+            ha-card {
+              --card-mod-icon-color: [[[
+                if (entity.state === 'X') return '#ff4444';
+                if (entity.state === 'M') return '#ff8800';
+                if (entity.state === 'C') return '#ffaa00';
+                return '#44ff44';
+              ]]];
+            }
+
+      # Solar Flux Index - Propagation Conditions
+      - type: custom:mushroom-entity-card
+        entity: sensor.hamclock_sfi
+        name: "Solar Flux"
+        icon: mdi:radio
+        primary_info: state
+        secondary_info: name
+        icon_color: |
+          [[[
+            if (entity.state >= 200) return 'green';
+            if (entity.state >= 150) return 'lightgreen';
+            if (entity.state >= 100) return 'yellow';
+            if (entity.state >= 70) return 'orange';
+            return 'red';
+          ]]]
+        card_mod:
+          style: |
+            ha-card {
+              --card-mod-icon-color: [[[
+                if (entity.state >= 200) return '#44ff44';
+                if (entity.state >= 150) return '#88ff88';
+                if (entity.state >= 100) return '#ffaa00';
+                if (entity.state >= 70) return '#ff8800';
+                return '#ff4444';
+              ]]];
+            }
+
+      # Solar Wind Speed
+      - type: custom:mushroom-entity-card
+        entity: sensor.hamclock_solar_wind_speed
+        name: "Solar Wind"
+        icon: mdi:weather-windy
+        primary_info: state
+        secondary_info: name
+        icon_color: |
+          [[[
+            if (entity.state >= 600) return 'red';
+            if (entity.state >= 400) return 'yellow';
+            return 'green';
+          ]]]
+        card_mod:
+          style: |
+            ha-card {
+              --card-mod-icon-color: [[[
+                if (entity.state >= 600) return '#ff4444';
+                if (entity.state >= 400) return '#ffaa00';
+                return '#44ff44';
+              ]]];
+            }
+
+      # Bz GSM - Geomagnetic Coupling
+      - type: custom:mushroom-entity-card
+        entity: sensor.hamclock_bz_gsm
+        name: "Bz GSM"
+        icon: mdi:compass
+        primary_info: state
+        secondary_info: name
+        icon_color: |
+          [[[
+            if (entity.state <= -10) return 'red';
+            if (entity.state <= -5) return 'orange';
+            if (entity.state >= 5) return 'blue';
+            return 'green';
+          ]]]
+        card_mod:
+          style: |
+            ha-card {
+              --card-mod-icon-color: [[[
+                if (entity.state <= -10) return '#ff4444';
+                if (entity.state <= -5) return '#ff8800';
+                if (entity.state >= 5) return '#4488ff';
+                return '#44ff44';
+              ]]];
+            }
+
+      # X-ray Flux (detailed)
+      - type: custom:mushroom-entity-card
+        entity: sensor.hamclock_xray_flux
+        name: "X-ray Flux"
+        icon: mdi:flash-outline
+        primary_info: state
+        secondary_info: name
+        icon_color: |
+          [[[
+            if (entity.state >= 1e-4) return 'red';
+            if (entity.state >= 1e-5) return 'orange';
+            if (entity.state >= 1e-6) return 'yellow';
+            return 'green';
+          ]]]
+        card_mod:
+          style: |
+            ha-card {
+              --card-mod-icon-color: [[[
+                if (entity.state >= 1e-4) return '#ff4444';
+                if (entity.state >= 1e-5) return '#ff8800';
+                if (entity.state >= 1e-6) return '#ffaa00';
+                return '#44ff44';
+              ]]];
+            }
+
+  # 48-hour Kp Index Chart
+  - type: custom:apexcharts-card
+    header:
+      title: "Kp Index - 48 Hour Trend"
+      show: true
+      show_states: true
+      colorize_states: true
+    graph_span: 48h
+    update_interval: 5min
+    series:
+      - entity: sensor.hamclock_kp_index
+        name: "Kp Index"
+        type: line
+        stroke_width: 3
+        color: "#4488ff"
+        show:
+          extremas: true
+    yaxis:
+      - min: 0
+        max: 9
+        decimals: 1
+    apex_config:
+      chart:
+        height: 200
+      stroke:
+        curve: smooth
+      markers:
+        size: 4
+      grid:
+        show: true
+        strokeDashArray: 2
+
+  # Status Summary
+  - type: entities
+    title: "Current Status Summary"
+    entities:
+      - entity: sensor.hamclock_kp_status
+        name: "Geomagnetic Activity"
+      - entity: sensor.hamclock_xray_status
+        name: "Solar Flare Activity"
+      - entity: sensor.hamclock_sfi_status
+        name: "Propagation Conditions"
+      - entity: sensor.hamclock_solar_wind_status
+        name: "Solar Wind Activity"
+      - entity: sensor.hamclock_bz_status
+        name: "Geomagnetic Coupling"
+
+  # Quick Actions
+  - type: horizontal-stack
+    cards:
+      - type: button
+        entity: script.hamclock_test_alerts
+        name: "Test Alerts"
+        icon: mdi:bell-ring
+        tap_action:
+          action: call-service
+          service: script.hamclock_test_alerts
+      - type: button
+        entity: input_select.hamclock_dashboard_view
+        name: "Switch View"
+        icon: mdi:view-dashboard
+        tap_action:
+          action: more-info

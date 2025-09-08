@@ -1,13 +1,46 @@
 # Home Assistant HamClock - Complete Integration
 # 
-# INSTALLATION INSTRUCTIONS:
-# 1. Copy the packages/ directory to your Home Assistant config directory
-# 2. Copy the dashboards/ directory to your Home Assistant config directory  
-# 3. Add the homeassistant section below to your configuration.yaml
-# 4. Restart Home Assistant
+# This template provides:
+# 1. Space weather sensor packages (Kp, X-ray, SFI, Solar Wind)
+# 2. Automated alerts with Pushover integration
+# 3. Four customizable Lovelace dashboards
+# 4. Configuration helpers for easy customization
 #
-# The dashboards will be available in the sidebar after restart.
+# INSTALLATION:
+# 1. Copy this entire configuration to your configuration.yaml
+# 2. Copy the packages/ and dashboards/ directories to your HA config
+# 3. Restart Home Assistant
+# 4. Dashboards will appear in the sidebar automatically
 
 # Include all HamClock packages
 homeassistant:
   packages: !include_dir_named packages
+
+# Lovelace dashboard configuration
+lovelace:
+  mode: yaml
+  dashboards:
+    hamclock-overview:
+      title: "HamClock Overview"
+      icon: mdi:weather-sunny
+      show_in_sidebar: true
+      mode: yaml
+      filename: "hamclock_overview.yaml"
+    hamclock-details:
+      title: "HamClock Details" 
+      icon: mdi:chart-line
+      show_in_sidebar: true
+      mode: yaml
+      filename: "hamclock_details.yaml"
+    hamclock-advanced:
+      title: "HamClock Advanced"
+      icon: mdi:space-station
+      show_in_sidebar: true
+      mode: yaml
+      filename: "hamclock_advanced.yaml"
+    hamclock-settings:
+      title: "HamClock Settings"
+      icon: mdi:cog
+      show_in_sidebar: true
+      mode: yaml
+      filename: "hamclock_settings.yaml"
