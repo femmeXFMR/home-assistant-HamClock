@@ -3,10 +3,11 @@
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2023.1%2B-blue.svg)](https://www.home-assistant.io/)
 [![HACS](https://img.shields.io/badge/HACS-Custom%20Repository-orange.svg)](https://hacs.xyz/)
+[![YAML](https://img.shields.io/badge/YAML-Configuration-blue.svg)](https://yaml.org/)
 [![Space Weather](https://img.shields.io/badge/Space%20Weather-NOAA%20SWPC-green.svg)](https://www.swpc.noaa.gov/)
 [![Amateur Radio](https://img.shields.io/badge/Amateur%20Radio-Ham%20Friendly-red.svg)](https://www.arrl.org/)
-[![Maintained?](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/yourusername/home-assistant-HamClock/graphs/commit-activity)
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/home-assistant-HamClock.svg?style=social&label=Star)](https://github.com/yourusername/home-assistant-HamClock)
+[![Maintained?](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/femmeXFMR/home-assistant-HamClock/graphs/commit-activity)
+[![GitHub stars](https://img.shields.io/github/stars/femmeXFMR/home-assistant-HamClock.svg?style=social&label=Star)](https://github.com/femmeXFMR/home-assistant-HamClock)
 
 A comprehensive Home Assistant integration that replicates HamClock's space weather monitoring capabilities as native sensors, modern dashboards, and automated alerts.
 
