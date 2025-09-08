@@ -1,12 +1,17 @@
 # Home Assistant HamClock
 
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2023.1%2B-blue.svg)](https://www.home-assistant.io/)
-[![HACS](https://img.shields.io/badge/HACS-Default-orange.svg)](https://hacs.xyz/)
+[![HACS](https://img.shields.io/badge/HACS-Custom%20Repository-orange.svg)](https://hacs.xyz/)
 [![Space Weather](https://img.shields.io/badge/Space%20Weather-NOAA%20SWPC-green.svg)](https://www.swpc.noaa.gov/)
 [![Amateur Radio](https://img.shields.io/badge/Amateur%20Radio-Ham%20Friendly-red.svg)](https://www.arrl.org/)
+[![Maintained?](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/yourusername/home-assistant-HamClock/graphs/commit-activity)
+[![GitHub stars](https://img.shields.io/github/stars/yourusername/home-assistant-HamClock.svg?style=social&label=Star)](https://github.com/yourusername/home-assistant-HamClock)
 
 A comprehensive Home Assistant integration that replicates HamClock's space weather monitoring capabilities as native sensors, modern dashboards, and automated alerts.
+
+> **⚡ WORK IN PROGRESS**  
+> This is an active development project. All questions, forks, commits, and contributions are welcome! I'm building a comprehensive space weather monitoring system for the Home Assistant community, inspired by the original HamClock.
 
 > **Inspired by [HamClock](https://github.com/softerhardware/HamClock)** by Robert L. Read - A beautiful space weather kiosk for amateur radio operators. This integration brings HamClock's functionality to Home Assistant with modern dashboards and automation capabilities.
 
@@ -229,11 +234,16 @@ apex_config:
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+I welcome all contributions! This project is actively developed and I'd love your help:
+
+- 🐛 **Bug Reports**: Found an issue? Please report it!
+- 💡 **Feature Requests**: Have ideas? I want to hear them!
+- 🔧 **Pull Requests**: Want to contribute code? Submit a PR!
+- 📖 **Documentation**: Help improve the docs!
+- 📝 **Testing**: Test with your Home Assistant setup and share feedback!
+- 💬 **Discussions**: Join the conversation in GitHub Discussions!
+
+No contribution is too small - every bit helps make this integration better for the community!
 
 ### Development Guidelines
 
