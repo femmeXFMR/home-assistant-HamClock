@@ -1,10 +1,16 @@
-# HamClock → Home Assistant Bridge
+# Home Assistant HamClock
+
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2023.1%2B-blue.svg)](https://www.home-assistant.io/)
+[![HACS](https://img.shields.io/badge/HACS-Default-orange.svg)](https://hacs.xyz/)
+[![Space Weather](https://img.shields.io/badge/Space%20Weather-NOAA%20SWPC-green.svg)](https://www.swpc.noaa.gov/)
+[![Amateur Radio](https://img.shields.io/badge/Amateur%20Radio-Ham%20Friendly-red.svg)](https://www.arrl.org/)
 
 A comprehensive Home Assistant integration that replicates HamClock's space weather monitoring capabilities as native sensors, modern dashboards, and automated alerts.
 
 > **Inspired by [HamClock](https://github.com/softerhardware/HamClock)** by Robert L. Read - A beautiful space weather kiosk for amateur radio operators. This integration brings HamClock's functionality to Home Assistant with modern dashboards and automation capabilities.
 
-## 🌟 Features
+## Features
 
 - **Real-time Space Weather Monitoring**: Kp index, X-ray flux, solar flux index, and solar wind data
 - **Modern Lovelace Dashboards**: ApexCharts visualizations and Mushroom card interfaces
@@ -15,7 +21,7 @@ A comprehensive Home Assistant integration that replicates HamClock's space weat
 - **Comprehensive Documentation**: Detailed setup guides, API documentation, and troubleshooting
 - **Modular Architecture**: Organized packages for easy customization and maintenance
 
-## 📊 Monitored Metrics
+## Monitored Metrics
 
 ### Geomagnetic Activity
 - **Kp Index**: 0-9 scale geomagnetic activity (NOAA planetary K index)
@@ -30,7 +36,7 @@ A comprehensive Home Assistant integration that replicates HamClock's space weat
 - **Wind Speed**: Solar wind velocity (ACE satellite data)
 - **Activity Status**: Low, moderate, high classification
 
-## 📱 Dashboard Views
+## Dashboard Views
 
 ### Overview Dashboard
 - **Quick Status**: Current space weather conditions at a glance
@@ -58,7 +64,7 @@ A comprehensive Home Assistant integration that replicates HamClock's space weat
 - **Feature Toggles**: Enable/disable specific features
 - **Quick Actions**: Reset defaults and test alerts
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Installation
 
@@ -179,13 +185,13 @@ apex_config:
     size: 4
 ```
 
-## 📚 Documentation
+## Documentation
 
 - **[Endpoints Documentation](docs/endpoints.md)**: Complete API reference and data source information
 - **[UI Guidelines](docs/ui_guidelines.md)**: Dashboard customization and design principles
 - **[Automations Guide](docs/automations.md)**: Alert system configuration and troubleshooting
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -221,7 +227,7 @@ apex_config:
    - Check automation states and triggers
    - Test automation conditions
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -236,11 +242,20 @@ apex_config:
 - Test all changes with real data
 - Maintain backward compatibility
 
-## 📄 License
+## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+**You are free to:**
+- Share and redistribute the material
+- Adapt and build upon the material
+
+**Under the following terms:**
+- **Attribution**: You must give appropriate credit
+- **NonCommercial**: You may not use the material for commercial purposes
+- **ShareAlike**: You must distribute contributions under the same license
+
+## Acknowledgments
 
 - **HamClock**: Original space weather monitoring application
 - **NOAA SWPC**: Space weather data and services
