@@ -1,0 +1,10 @@
+{
+  "domain": "hamclock",
+  "name": "HamClock",
+  "documentation": "https://github.com/femmeXFMR/home-assistant-HamClock",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": ["@femmeXFMR"],
+  "version": "1.0.0",
+  "iot_class": "cloud_polling"
+}
