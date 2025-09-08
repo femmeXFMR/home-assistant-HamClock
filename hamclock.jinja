@@ -1,34 +1,13 @@
 # Home Assistant HamClock - Complete Integration
-# Copy this entire file to your configuration.yaml or use as a package
+# 
+# INSTALLATION INSTRUCTIONS:
+# 1. Copy the packages/ directory to your Home Assistant config directory
+# 2. Copy the dashboards/ directory to your Home Assistant config directory  
+# 3. Add the homeassistant section below to your configuration.yaml
+# 4. Restart Home Assistant
+#
+# The dashboards will be available in the sidebar after restart.
 
 # Include all HamClock packages
 homeassistant:
   packages: !include_dir_named packages
-
-# Include all HamClock dashboards
-lovelace:
-  dashboards:
-    hamclock-overview:
-      title: "HamClock Overview"
-      icon: mdi:weather-sunny
-      show_in_sidebar: true
-      mode: yaml
-      filename: "hamclock_overview.yaml"
-    hamclock-details:
-      title: "HamClock Details"
-      icon: mdi:chart-line
-      show_in_sidebar: true
-      mode: yaml
-      filename: "hamclock_details.yaml"
-    hamclock-advanced:
-      title: "HamClock Advanced"
-      icon: mdi:space-station
-      show_in_sidebar: true
-      mode: yaml
-      filename: "hamclock_advanced.yaml"
-    hamclock-settings:
-      title: "HamClock Settings"
-      icon: mdi:cog
-      show_in_sidebar: true
-      mode: yaml
-      filename: "hamclock_settings.yaml"
