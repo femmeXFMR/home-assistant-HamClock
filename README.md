@@ -2,6 +2,8 @@
 
 A comprehensive Home Assistant integration that replicates HamClock's space weather monitoring capabilities as native sensors, modern dashboards, and automated alerts.
 
+> **Inspired by [HamClock](https://github.com/softerhardware/HamClock)** by Robert L. Read - A beautiful space weather kiosk for amateur radio operators. This integration brings HamClock's functionality to Home Assistant with modern dashboards and automation capabilities.
+
 ## 🌟 Features
 
 - **Real-time Space Weather Monitoring**: Kp index, X-ray flux, solar flux index, and solar wind data
