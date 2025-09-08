@@ -13,7 +13,7 @@ A comprehensive Home Assistant integration that replicates HamClock's space weat
 > **⚡ WORK IN PROGRESS**  
 > This is an active development project. All questions, forks, commits, and contributions are welcome! I'm building a comprehensive space weather monitoring system for the Home Assistant community, inspired by the original HamClock.
 
-> **Inspired by [HamClock](https://github.com/softerhardware/HamClock)** by Robert L. Read - A beautiful space weather kiosk for amateur radio operators. This integration brings HamClock's functionality to Home Assistant with modern dashboards and automation capabilities.
+> **Inspired by [HamClock](https://www.clearskyinstitute.com/ham/HamClock/)** by Elwood Downey, WBØOEW - A beautiful space weather kiosk for amateur radio operators. This integration brings HamClock's functionality to Home Assistant with modern dashboards and automation capabilities.
 
 ## Features
 
@@ -267,7 +267,7 @@ This project is licensed under the Creative Commons Attribution-NonCommercial-Sh
 
 ## Acknowledgments
 
-- **HamClock**: Original space weather monitoring application
+- **HamClock** by Elwood Downey, WBØOEW: Original space weather monitoring application
 - **NOAA SWPC**: Space weather data and services
 - **Home Assistant Community**: Custom cards and integrations
 - **Amateur Radio Community**: Feedback and testing
