@@ -5,9 +5,6 @@
 # with extended time ranges and additional sensor data.
 
 title: "HamClock Detailed View"
-path: "hamclock-details"
-icon: mdi:chart-line
-panel: false
 cards:
   # Header
   - type: markdown

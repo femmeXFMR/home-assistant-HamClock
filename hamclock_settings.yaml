@@ -1,7 +1,4 @@
 title: HamClock Settings
-path: hamclock-settings
-icon: mdi:cog
-panel: false
 type: sidebar
 badges: []
 cards:

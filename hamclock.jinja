@@ -1,46 +1,24 @@
-# Home Assistant HamClock - Complete Integration
+# Home Assistant HamClock - Space Weather Integration
 # 
-# This template provides:
-# 1. Space weather sensor packages (Kp, X-ray, SFI, Solar Wind)
+# This template provides space weather monitoring for amateur radio operators:
+# 1. Real-time space weather sensors (Kp, X-ray, SFI, Solar Wind)
 # 2. Automated alerts with Pushover integration
-# 3. Four customizable Lovelace dashboards
-# 4. Configuration helpers for easy customization
+# 3. Configuration helpers for easy customization
 #
 # INSTALLATION:
-# 1. Copy this entire configuration to your configuration.yaml
-# 2. Copy the packages/ and dashboards/ directories to your HA config
+# 1. Copy this configuration to your configuration.yaml
+# 2. Copy the packages/ directory to your HA config directory
 # 3. Restart Home Assistant
-# 4. Dashboards will appear in the sidebar automatically
+# 4. Create dashboards in Lovelace UI using the provided YAML files
+#
+# DASHBOARD SETUP:
+# After restart, go to Configuration > Dashboards > Add Dashboard
+# Choose "Import from file" and use the YAML files from the repository:
+# - hamclock_overview.yaml
+# - hamclock_details.yaml  
+# - hamclock_advanced.yaml
+# - hamclock_settings.yaml
 
 # Include all HamClock packages
 homeassistant:
   packages: !include_dir_named packages
-
-# Lovelace dashboard configuration
-lovelace:
-  mode: yaml
-  dashboards:
-    hamclock-overview:
-      title: "HamClock Overview"
-      icon: mdi:weather-sunny
-      show_in_sidebar: true
-      mode: yaml
-      filename: "hamclock_overview.yaml"
-    hamclock-details:
-      title: "HamClock Details" 
-      icon: mdi:chart-line
-      show_in_sidebar: true
-      mode: yaml
-      filename: "hamclock_details.yaml"
-    hamclock-advanced:
-      title: "HamClock Advanced"
-      icon: mdi:space-station
-      show_in_sidebar: true
-      mode: yaml
-      filename: "hamclock_advanced.yaml"
-    hamclock-settings:
-      title: "HamClock Settings"
-      icon: mdi:cog
-      show_in_sidebar: true
-      mode: yaml
-      filename: "hamclock_settings.yaml"

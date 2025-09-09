@@ -1,7 +1,4 @@
 title: HamClock Advanced
-path: hamclock-advanced
-icon: mdi:satellite-variant
-panel: false
 type: sidebar
 badges: []
 cards:

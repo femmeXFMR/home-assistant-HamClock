@@ -5,9 +5,6 @@
 # space weather metrics with modern cards and visual indicators.
 
 title: "HamClock Space Weather"
-path: "hamclock-overview"
-icon: mdi:weather-sunny
-panel: false
 cards:
   # Header with refresh button
   - type: horizontal-stack

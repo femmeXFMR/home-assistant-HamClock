@@ -1,0 +1,20 @@
+# Home Assistant HamClock - Complete Integration
+# 
+# This template provides everything you need for space weather monitoring:
+# 1. Space weather sensor packages (Kp, X-ray, SFI, Solar Wind)
+# 2. Automated alerts with Pushover integration
+# 3. Configuration helpers for easy customization
+#
+# INSTALLATION:
+# 1. Copy this entire configuration to your configuration.yaml
+# 2. Copy the packages/ directory to your HA config directory
+# 3. Restart Home Assistant
+# 4. Create dashboards manually in Lovelace UI using the provided YAML
+
+# Include all HamClock packages
+homeassistant:
+  packages: !include_dir_named packages
+
+# Lovelace configuration (optional - you can also use UI mode)
+lovelace:
+  mode: yaml
