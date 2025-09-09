@@ -5,6 +5,8 @@
 # space weather metrics with modern cards and visual indicators.
 
 title: "HamClock Space Weather"
+type: sidebar
+badges: []
 cards:
   # Header with refresh button
   - type: horizontal-stack

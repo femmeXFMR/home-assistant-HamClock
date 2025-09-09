@@ -1,4 +1,6 @@
 title: HamClock Advanced
+type: sidebar
+badges: []
 cards:
   # Header with current conditions summary
   - type: custom:mushroom-template-card

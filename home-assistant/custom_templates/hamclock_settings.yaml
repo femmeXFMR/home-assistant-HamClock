@@ -1,4 +1,6 @@
 title: HamClock Settings
+type: sidebar
+badges: []
 cards:
   # Header
   - type: custom:mushroom-template-card

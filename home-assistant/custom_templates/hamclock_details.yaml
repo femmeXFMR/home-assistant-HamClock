@@ -5,6 +5,8 @@
 # with extended time ranges and additional sensor data.
 
 title: "HamClock Detailed View"
+type: sidebar
+badges: []
 cards:
   # Header
   - type: markdown
