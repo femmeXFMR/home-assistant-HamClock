@@ -4,8 +4,8 @@
 # This is the main package that includes all HamClock space weather sensors
 # and provides the foundation for the Home Assistant integration.
 
-# Include all space weather packages
-!include_dir_named packages
+# This file contains the core HamClock configuration
+# Individual sensor packages are included separately
 
 # Main group for all HamClock sensors
 group:
